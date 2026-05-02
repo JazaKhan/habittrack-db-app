@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- This meta tag ensures that the website renders correctly across different device sizes, enhancing mobile responsiveness. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Link to the external CSS stylesheet. Uncomment if you wish to customize or add styling. -->
+    <link rel="stylesheet" href="styles.css">
+
+    <title>Database Application</title>
+</head>
+<body>
+    <div class="layout">        <!-- whole container -->
+        <aside class="leftbar">  <!-- left side -->
+          <div class="logo">HabitTrack</div> <!-- sidebar top -->
+          <nav>
+            <p data-tab="tab-habits">Habits</p>
+            <p data-tab="tab-habitlog">Habit Log</p>
+            <p data-tab="tab-category">Category</p>
+            <p data-tab="tab-goals">Goals</p>
+            <p data-tab="tab-progress">Progress Report</p>
+        </nav>        
+        </aside>
+        <div class="main">       <!-- main page stacked vertically-->
+          <div class="topbar">
+            <h1>HabitTrack</h1>       <!-- header on main area -->
+          </div> 
+          <div class="content">
+            <!-- Creating each tab -->
+
+            <div id="tab-habits" class="tab active">
+                <h2>Habits</h2>
+                <p>This is where your habits will be listed.</p>
+                <p id = "deleteHabitMsg"></p>
+                <table id="habit-table">
+                    <thead>
+                        <tr>
+                            <th>Habit ID</th>
+                            <th>Category ID</th>
+                            <th>Category</th>
+                            <th>Schedule ID</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <h2>Update Habit Table</h2>
+                <input type="number" id="habitIdInput" placeholder="Habit ID" readonly>
+                <input type="text" id="newTitleInput" placeholder="New Title">
+
+                <button onclick="updateHabit()">Update</button>
+                <p id="habitUpdateMsg"></p>
+
+                <!-- FORM FOR HABIT INSERT -->
+                <div id = "insertHabitForm">
+                    <h2>Add New Habit</h2>
+
+                    <label>Category ID</label>
+                    <input type="number" id="insertCategoryId"><br>
+
+                    <label>Schedule</label>
+                    <input type="number" id="insertScheduleId"><br><br>
+
+                    <label>Title*</label>
+                    <input type="text" id="insertTitle" placeholder="e.g. Morning run"><br>
+
+                    <label>Description</label>
+                    <input type="text" id="insertDescription" placeholder="optional"><br>
+
+                    <label>Start Date*</label>
+                    <input type="date" id="insertStartDate"><br>
+
+                    <label>End Date</label>
+                    <input type="date" id="insertEndDate"><br>
+
+                    <label>Status</label>
+                    <input type="text" id="insertStatus" placeholder="active/paused/archived"><br>
+                </div>
+                <button type="button" id="submitNewHabit">Submit</button>
+                <p id="insertHabitMsg"></p>
+            </div>
+            <div id="tab-goals" class="tab">
+                <h2>Goals</h2>
+                <p>Click to select columns, drag to reorder them, then press <strong>View Goals</strong>.</p>
+
+                <h3>My Goals</h3>
+                <p>Select and drag columns into the order you want them to appear:</p>
+
+                <div id="goal-column-selector">
+                    <div class="col-option" draggable="true" data-col="goal_id">Goal ID</div>
+                    <div class="col-option" draggable="true" data-col="name">Name</div>
+                    <div class="col-option" draggable="true" data-col="description">Description</div>
+                    <div class="col-option" draggable="true" data-col="start_date">Start Date</div>
+                    <div class="col-option" draggable="true" data-col="end_date">End Date</div>
+                </div>
+
+                <button id="loadGoalProjectionBtn">View Goals</button>
+                <p id="projectionMsg" style="color:red;"></p>
+                <table id="goal-projection-table">
+                    <thead>
+                        <tr id="goal-projection-headers"></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <hr>
+
+                <h3>Goals Covering a Category</h3>
+                <p>Find goals that are linked to every habit in a selected category.</p>
+
+                <label for="divisionCategoryIdInput">Category:</label>
+                <select id="divisionCategoryIdInput">
+                    <option value="">-- Select a Category --</option>
+                </select>
+                <button id="loadDivisionBtn">Find Matching Goals</button>
+                <p id="divisionMsg" style="color: gray; font-style: italic;"></p>
+
+                <table id="division-table">
+                    <thead>
+                        <tr>
+                            <th>Goal ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="tab-progress" class="tab">
+                
+                <!-- Progress Report -->
+                <h2>Progress Report</h2>
+                <p>This is where your Progress Reports will be listed.</p>
+
+                <table id="progress">
+                    <thead>
+                        <tr>
+                            <th>Report ID</th>
+                            <th>Habit ID</th>
+                            <th>Habit</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Period</th>
+                            <th>Completion</th>
+                            <th>Avg Per Period</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <!-- FORM FOR PROGRESS REPORT UPDATE -->
+                <div id = "updateReportForm" style="display:none">
+                    <h2>Edit Progress Report</h2>
+                    <label>Report ID</label>
+                    <input type="number" id="editReportId" readonly><br><br>
+                    
+                    <label>Habit ID</label>
+                    <input type="number" id="editHabitId"><br><br>
+
+                    <label>Start Date</label>
+                    <input type="date" id="editStartDate"><br><br>
+
+                    <label>End Date</label>
+                    <input type="date" id="editEndDate"><br><br>
+
+                    <label>Report Period</label>
+                    <input type="text" id="editReportPeriod"><br><br>
+
+                    <label>Completion Rate</label>
+                    <input type="number" id="editCompletionRate"  min="0" max="100" step="1"><br><br>
+
+                    <label>Avg Per Period</label>
+                    <input type="number" id="editAvgPerPeriod"  min="0" step="1"><br><br>
+                    <button onclick="updateProgressReport()">Update</button> 
+                    <p id="updateMsg"></p>
+                </div>
+
+                <h2>Progress</h2>
+                <p>Track performance, summaries, and top habits.</p>
+
+                <h3>Habit Progress</h3>
+                <button id="loadHabitProgressJoinBtn">View Habit Progress</button>
+                <table id="habit-progress-join-table">
+                    <thead>
+                        <tr>
+                            <th>Habit ID</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Report ID</th>
+                            <th>Period Start</th>
+                            <th>Period End</th>
+                            <th>Report Period</th>
+                            <th>Completion Rate</th>
+                            <th>Average Value</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <hr>
+
+                <h3>Progress Summary</h3>
+                <label for="groupByReportPeriodInput">Report Period (optional):</label>
+                <input type="text" id="groupByReportPeriodInput" placeholder="weekly / monthly /custom">
+                <button id="loadGroupByBtn">Show Summary</button>
+                <table id="progress-groupby-table">
+                    <thead>
+                        <tr>
+                            <th>Report Period</th>
+                            <th>Number of Reports</th>
+                            <th>Average Completion</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <hr>
+
+                <h3>Find Habit</h3>
+                <label for="Category ID">Category ID</label>
+                <input type="text" id="categoryID" placeholder="Enter Category ID">
+
+                <label for="Status">Status</label>
+                <input type="text" id="statusID" placeholder="Active/Paused/Archived">
+                
+                <label for="Condition">Condition</label>
+                <input type="text" id="conditionID" placeholder="AND/OR">
+                
+                <button id="loadGroupByBtn">Show Summary</button>
+                <table id="progress-groupby-table">
+                    <thead>
+                        <tr>
+                            <th>Report Period</th>
+                            <th>Number of Reports</th>
+                            <th>Average Completion</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <hr>
+
+                <h3>Filtered Progress Summary</h3>
+                <label for="havingMinAvgInput">Minimum Average Completion:</label>
+                <input type="number" id ="havingMinAvgInput" placeholder="e.g. 70">
+                <button id="loadHavingBtn">Apply Filter</button>
+                <table id="progress-having-table">
+                    <thead>
+                        <tr>
+                            <th>Report Period</th>
+                            <th>Number of Reports</th>
+                            <th>Average Completion</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+                <hr> 
+
+                <h3>Top Performing Habits</h3>
+                <button id="loadNestedAggregationBtn">Show Top Habits</button>
+                <table id="nested-aggregation-table">
+                    <thead>
+                        <tr>
+                            <th>Habit ID</th>
+                            <th>Title</th>
+                            <th>Average Completion</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="tab-habitlog" class="tab">
+                <h2>Log</h2>
+                <p>This is your habit log.</p>
+                <table id="habit-log">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Completed</th>
+                            <th>Points Earned</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div id="tab-category" class="tab">
+                <h2>Category</h2>
+                <p>This is where your categories will be listed.</p>
+                <p id = "deleteCategoryMsg"></p>
+                <table id="category-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Theme</th>
+                            <th>Description</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+            </div>
+
+            <div id="tab-goals" class="tab">
+                <h2>Goal</h2>
+                <p>This is where your goals will be listed.</p>
+
+                <h3>Select Columns</h3>
+
+                <div id="column-buttons">
+                    <button class="select-btn" data-col="goal_id">Goal ID</button>
+                    <button class="select-btn" data-col="name">Name</button>
+                    <button class="select-btn" data-col="description">Description</button>
+                    <button class="select-btn" data-col="start_date">Start Date</button>
+                    <button class="select-btn" data-col="end_date">End Date</button>
+                </div>
+
+                <table id="goal-table">
+                    <thead>
+                        <tr>
+                            <th>Goal ID</th>
+                            <th>Name</th>
+                            <th>Theme</th>
+                            <th>Description</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- ===================================================================================== -->
+    <!-- External JavaScript file that contains the functionality/logic for the operations above. -->
+    <script src="scripts.js"></script>
+</body>
+</html>

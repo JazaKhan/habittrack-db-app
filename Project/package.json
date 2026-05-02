@@ -1,0 +1,16 @@
+{
+    "name": "habit_tracker",
+    "version": "1.0.0",
+    "description": "Habit tracking project for CPSC304.",
+    "main": "server.js",
+    "keywords": [],
+    "author": {
+      "name": "Shreya Beas"
+    },
+    "license": "ISC",
+    "dependencies": {
+      "express": "^4.17.3",
+      "oracledb": "^5.2.0"
+    }
+  }
+  
